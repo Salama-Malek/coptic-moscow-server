@@ -1,0 +1,133 @@
+/**
+ * Design tokens — CSS custom properties.
+ * Light theme is the default on :root. Dark theme applies when
+ * [data-theme="dark"] is set on <html>, or when the OS prefers dark
+ * and the user hasn't overridden (data-theme="auto").
+ */
+
+:root,
+[data-theme='light'] {
+  --color-primary: #6B1A1A;
+  --color-primary-light: #8B2E2E;
+  --color-primary-dark: #4A1212;
+  --color-gold: #C9A24A;
+  --color-gold-light: #E8D29A;
+  --color-gold-dark: #A88833;
+  --color-ink: #2A1F1A;
+  --color-ink-muted: #6B5D4A;
+  --color-ink-faint: #9B8D7A;
+  --color-parchment: #FAF5E9;
+  --color-parchment-dark: #F0E6D1;
+  --color-surface: #F0E6D1;
+  --color-surface-hover: #EAE0C8;
+  --color-muted: #6B5D4A;
+  --color-white: #FFFFFF;
+  --color-error: #A63D2A;
+  --color-error-soft: #F3DFD9;
+  --color-success: #4A7C3F;
+  --color-success-soft: #DCE8D4;
+  --color-warning: #C9892A;
+  --color-warning-soft: #F5E8CE;
+  --color-border: #E5D9BF;
+  --color-divider: #E5D9BF;
+  --color-overlay: rgba(42, 31, 26, 0.5);
+  --color-focus-ring: rgba(201, 162, 74, 0.4);
+
+  --shadow-sm: 0 1px 2px rgba(42, 31, 26, 0.08);
+  --shadow-md: 0 4px 12px rgba(42, 31, 26, 0.10);
+  --shadow-lg: 0 12px 32px rgba(42, 31, 26, 0.14);
+  --shadow-xl: 0 24px 48px rgba(42, 31, 26, 0.18);
+  --shadow-focus: 0 0 0 3px rgba(201, 162, 74, 0.4);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+  --space-4xl: 64px;
+
+  --duration-micro: 150ms;
+  --duration-short: 200ms;
+  --duration-medium: 300ms;
+  --duration-long: 450ms;
+  --easing-standard: cubic-bezier(0.32, 0.72, 0, 1);
+  --easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+[data-theme='dark'] {
+  --color-primary: #C9A24A;
+  --color-primary-light: #E8D29A;
+  --color-primary-dark: #A88833;
+  --color-gold: #C9A24A;
+  --color-gold-light: #E8D29A;
+  --color-gold-dark: #A88833;
+  --color-ink: #F0E6D1;
+  --color-ink-muted: #A89982;
+  --color-ink-faint: #7A6E5C;
+  --color-parchment: #1C1511;
+  --color-parchment-dark: #2A2017;
+  --color-surface: #2A2017;
+  --color-surface-hover: #33271D;
+  --color-muted: #A89982;
+  --color-white: #F0E6D1;
+  --color-error: #E07B5F;
+  --color-error-soft: #3D211A;
+  --color-success: #8BB37D;
+  --color-success-soft: #1F2E1B;
+  --color-warning: #E0B773;
+  --color-warning-soft: #3D2F1A;
+  --color-border: #3D3226;
+  --color-divider: #3D3226;
+  --color-overlay: rgba(0, 0, 0, 0.7);
+  --color-focus-ring: rgba(201, 162, 74, 0.5);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.6);
+  --shadow-focus: 0 0 0 3px rgba(201, 162, 74, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme='auto'] {
+    --color-primary: #C9A24A;
+    --color-primary-light: #E8D29A;
+    --color-primary-dark: #A88833;
+    --color-gold: #C9A24A;
+    --color-gold-light: #E8D29A;
+    --color-gold-dark: #A88833;
+    --color-ink: #F0E6D1;
+    --color-ink-muted: #A89982;
+    --color-ink-faint: #7A6E5C;
+    --color-parchment: #1C1511;
+    --color-parchment-dark: #2A2017;
+    --color-surface: #2A2017;
+    --color-surface-hover: #33271D;
+    --color-muted: #A89982;
+    --color-white: #F0E6D1;
+    --color-error: #E07B5F;
+    --color-error-soft: #3D211A;
+    --color-success: #8BB37D;
+    --color-success-soft: #1F2E1B;
+    --color-warning: #E0B773;
+    --color-warning-soft: #3D2F1A;
+    --color-border: #3D3226;
+    --color-divider: #3D3226;
+    --color-overlay: rgba(0, 0, 0, 0.7);
+    --color-focus-ring: rgba(201, 162, 74, 0.5);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.6);
+    --shadow-focus: 0 0 0 3px rgba(201, 162, 74, 0.5);
+  }
+}

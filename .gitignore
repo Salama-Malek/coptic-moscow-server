@@ -1,0 +1,29 @@
+node_modules/
+admin-web/node_modules/
+
+# Build output
+dist/
+admin-web/dist/
+
+# Environment — secrets go in Hostinger env UI
+.env
+.env.local
+.env.*.local
+
+# Firebase service account — NEVER commit
+**/firebase-service-account.json
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
