@@ -235,7 +235,6 @@ export default function NewAnnouncement() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
               gap: 'var(--space-md)',
               marginTop: 'var(--space-md)',
             }}
