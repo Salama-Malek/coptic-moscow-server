@@ -3,13 +3,12 @@ import { useTranslation } from 'react-i18next';
 import {
   Send,
   Save,
+  Eye,
   FileText,
   CalendarClock,
   AlertTriangle,
   Bell,
   Pencil,
-  ChevronDown,
-  ChevronUp,
   Clock,
   type LucideIcon,
 } from 'lucide-react';
@@ -22,6 +21,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input, Textarea } from '../components/ui/Input';
+import { Modal } from '../components/ui/Modal';
 import { Toast, type ToastKind } from '../components/ui/Toast';
 import { getFonts } from '../theme/fonts';
 import type { Template, Stats } from '../types';
@@ -61,7 +61,7 @@ export default function NewAnnouncement() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [sending, setSending] = useState(false);
   const [toast, setToast] = useState<{ kind: ToastKind; message: string } | null>(null);
-  const [showPreview, setShowPreview] = useState(!isMobile);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     if (selectedTemplateId && templates) {
@@ -200,16 +200,8 @@ export default function NewAnnouncement() {
         />
       </div>
 
-      {/* Two-pane layout */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1fr) minmax(0, 1fr)',
-          gap: isMobile ? 'var(--space-md)' : 'var(--space-xl)',
-          alignItems: 'start',
-        }}
-      >
-        {/* ============ Compose pane ============ */}
+      {/* Single-column compose form (preview in modal) */}
+      <div style={{ maxWidth: 840, marginInline: 'auto' }}>
         <Card padding="lg" elevation="sm">
           {/* Template picker */}
           <Section icon={FileText} label={t('choose_template')}>
@@ -423,90 +415,68 @@ export default function NewAnnouncement() {
             </div>
           )}
 
-          {/* Actions */}
+          {/* Actions — Preview separated on the left, Save/Send on the right */}
           <div
             style={{
               marginTop: 'var(--space-xl)',
               display: 'flex',
               flexDirection: isMobile ? 'column' : 'row',
               gap: 'var(--space-sm)',
-              justifyContent: 'flex-end',
+              justifyContent: 'space-between',
+              alignItems: isMobile ? 'stretch' : 'center',
             }}
           >
             <Button
-              variant="secondary"
-              leadingIcon={Save}
-              onClick={() => handleSend(true)}
-              disabled={sending || !titleAr}
-              loading={sending}
-              fullWidth={isMobile}
-            >
-              {t('ann_save_draft')}
-            </Button>
-            <Button
-              variant="primary"
-              leadingIcon={scheduleMode === 'schedule' ? CalendarClock : Send}
-              onClick={() => setShowConfirm(true)}
-              disabled={sending || !canSend}
-              fullWidth={isMobile}
-            >
-              {t('ann_preview_send')}
-            </Button>
-          </div>
-        </Card>
-
-        {/* ============ Preview pane ============ */}
-        {isMobile ? (
-          <div>
-            <Button
               variant="ghost"
-              fullWidth
-              leadingIcon={showPreview ? ChevronUp : ChevronDown}
-              onClick={() => setShowPreview(!showPreview)}
+              leadingIcon={Eye}
+              onClick={() => setPreviewOpen(true)}
+              fullWidth={isMobile}
             >
               {t('live_preview')}
             </Button>
-            {showPreview && (
-              <div style={{ marginTop: 'var(--space-md)' }}>
-                <LivePreview
-                  bodyAr={manualEdit ? editedBodyAr : bodyAr}
-                  bodyRu={manualEdit ? editedBodyRu : bodyRu}
-                  bodyEn={manualEdit ? editedBodyEn : bodyEn}
-                />
-              </div>
-            )}
-          </div>
-        ) : (
-          <Card padding="lg" elevation="sm" style={{ position: 'sticky', top: 'var(--space-lg)' }}>
             <div
               style={{
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: isMobile ? 'column' : 'row',
                 gap: 'var(--space-sm)',
-                marginBottom: 'var(--space-md)',
               }}
             >
-              <Bell size={16} strokeWidth={1.75} color="var(--color-primary)" />
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  color: 'var(--color-ink-muted)',
-                }}
+              <Button
+                variant="secondary"
+                leadingIcon={Save}
+                onClick={() => handleSend(true)}
+                disabled={sending || !titleAr}
+                loading={sending}
+                fullWidth={isMobile}
               >
-                {t('live_preview')}
-              </h3>
+                {t('ann_save_draft')}
+              </Button>
+              <Button
+                variant="primary"
+                leadingIcon={scheduleMode === 'schedule' ? CalendarClock : Send}
+                onClick={() => setShowConfirm(true)}
+                disabled={sending || !canSend}
+                fullWidth={isMobile}
+              >
+                {t('ann_preview_send')}
+              </Button>
             </div>
-            <LivePreview
-              bodyAr={manualEdit ? editedBodyAr : bodyAr}
-              bodyRu={manualEdit ? editedBodyRu : bodyRu}
-              bodyEn={manualEdit ? editedBodyEn : bodyEn}
-            />
-          </Card>
-        )}
+          </div>
+        </Card>
+
+        {/* Live preview modal */}
+        <Modal
+          open={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          title={t('live_preview')}
+          size="md"
+        >
+          <LivePreview
+            bodyAr={manualEdit ? editedBodyAr : bodyAr}
+            bodyRu={manualEdit ? editedBodyRu : bodyRu}
+            bodyEn={manualEdit ? editedBodyEn : bodyEn}
+          />
+        </Modal>
       </div>
 
       <ConfirmModal
