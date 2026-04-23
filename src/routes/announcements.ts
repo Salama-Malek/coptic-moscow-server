@@ -25,6 +25,18 @@ const createAnnouncementSchema = z.object({
   status: z.enum(['draft', 'scheduled', 'sent']).optional(),
 });
 
+const updateAnnouncementSchema = z.object({
+  title_ar: z.string().min(1).max(200).optional(),
+  title_ru: z.string().max(200).nullable().optional(),
+  title_en: z.string().max(200).nullable().optional(),
+  body_ar: z.string().min(1).optional(),
+  body_ru: z.string().nullable().optional(),
+  body_en: z.string().nullable().optional(),
+  priority: z.enum(['normal', 'high', 'critical']).optional(),
+  category: z.enum(['service', 'announcement']).optional(),
+  scheduled_for: z.string().datetime({ offset: true }).nullable().optional(),
+});
+
 const listQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),
 });
@@ -139,7 +151,68 @@ router.post('/admin', requireAuth, validate(createAnnouncementSchema), async (re
   }
 });
 
-// --- Admin: delete announcement (only if not yet sent) ---
+// --- Admin: update announcement (allowed at any stage, including after send) ---
+
+router.put('/admin/:id', requireAuth, validate(updateAnnouncementSchema), async (req, res) => {
+  try {
+    const id = parseInt(String(req.params.id), 10);
+    const data = req.body as z.infer<typeof updateAnnouncementSchema>;
+
+    const [existing] = await pool.execute(
+      'SELECT id, status FROM announcements WHERE id = ?',
+      [id]
+    );
+    if ((existing as RowDataPacket[]).length === 0) {
+      res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Announcement not found' } });
+      return;
+    }
+
+    // Build dynamic UPDATE from only the fields the client provided
+    const fields: string[] = [];
+    const values: Array<string | number | null> = [];
+    const colMap: Record<string, keyof typeof data> = {
+      title_ar: 'title_ar',
+      title_ru: 'title_ru',
+      title_en: 'title_en',
+      body_ar: 'body_ar',
+      body_ru: 'body_ru',
+      body_en: 'body_en',
+      priority: 'priority',
+      category: 'category',
+      scheduled_for: 'scheduled_for',
+    };
+    for (const col of Object.keys(colMap)) {
+      const key = colMap[col];
+      const val = data[key];
+      if (val !== undefined) {
+        fields.push(`${col} = ?`);
+        values.push(val as string | number | null);
+      }
+    }
+    if (fields.length === 0) {
+      res.status(400).json({ error: { code: 'NO_FIELDS', message: 'No fields to update' } });
+      return;
+    }
+    values.push(id);
+
+    await pool.execute(`UPDATE announcements SET ${fields.join(', ')} WHERE id = ?`, values);
+
+    await logAudit({
+      adminId: req.admin!.adminId,
+      action: 'edit_announcement',
+      targetType: 'announcement',
+      targetId: id,
+      ip: req.ip,
+    });
+
+    res.json({ id, message: 'Announcement updated' });
+  } catch (err) {
+    console.error('[announcements/admin/update]', err);
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } });
+  }
+});
+
+// --- Admin: delete announcement (any status, including sent) ---
 
 router.delete('/admin/:id', requireAuth, async (req, res) => {
   try {
@@ -153,11 +226,6 @@ router.delete('/admin/:id', requireAuth, async (req, res) => {
 
     if (announcements.length === 0) {
       res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Announcement not found' } });
-      return;
-    }
-
-    if (announcements[0].sent_at !== null) {
-      res.status(400).json({ error: { code: 'ALREADY_SENT', message: 'Cannot delete a sent announcement' } });
       return;
     }
 
