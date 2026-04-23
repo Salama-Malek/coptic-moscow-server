@@ -124,7 +124,7 @@ export default function NewAnnouncement() {
       const finalBodyRu = manualEdit ? editedBodyRu : bodyRu || '';
       const finalBodyEn = manualEdit ? editedBodyEn : bodyEn || '';
 
-      await api.post('/admin/announcements', {
+      await api.post('/announcements/admin', {
         title_ar: titleAr,
         title_ru: titleRu || undefined,
         title_en: titleEn || undefined,

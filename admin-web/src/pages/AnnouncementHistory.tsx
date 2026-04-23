@@ -11,12 +11,12 @@ export default function AnnouncementHistory() {
   const fonts = getFonts(i18n.language);
   const lang = i18n.language as Language;
   const isMobile = useIsMobile();
-  const { data: announcements, loading, refetch } = useApiGet<Announcement[]>('/admin/announcements?limit=100');
+  const { data: announcements, loading, refetch } = useApiGet<Announcement[]>('/announcements/admin?limit=100');
 
   const handleDelete = async (id: number) => {
     if (!confirm(t('confirm') + '?')) return;
     try {
-      await api.delete(`/admin/announcements/${id}`);
+      await api.delete(`/announcements/admin/${id}`);
       refetch();
     } catch { alert(t('error')); }
   };
