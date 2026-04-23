@@ -14,11 +14,14 @@ import {
   Menu,
   X,
   ChevronRight,
+  Zap,
   type LucideIcon,
 } from 'lucide-react';
 import { getFonts } from '../theme/fonts';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import LanguageSwitcher from './LanguageSwitcher';
+import QuickMessageModal from './QuickMessageModal';
+import { Toast, type ToastKind } from './ui/Toast';
 
 interface LayoutProps {
   children: ReactNode;
@@ -39,6 +42,8 @@ export default function Layout({ children }: LayoutProps) {
   const isMobile = useIsMobile();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [quickOpen, setQuickOpen] = useState(false);
+  const [toast, setToast] = useState<{ kind: ToastKind; message: string } | null>(null);
 
   const adminStr = localStorage.getItem('admin_user');
   const admin = adminStr ? JSON.parse(adminStr) : null;
@@ -546,6 +551,56 @@ export default function Layout({ children }: LayoutProps) {
           {children}
         </div>
       </main>
+
+      {/* Quick message FAB — always accessible */}
+      <button
+        onClick={() => setQuickOpen(true)}
+        aria-label={t('quick_message', 'Quick message')}
+        title={t('quick_message', 'Quick message')}
+        style={{
+          position: 'fixed',
+          insetInlineEnd: isMobile ? 18 : 28,
+          bottom: isMobile ? 18 : 28,
+          width: isMobile ? 56 : 60,
+          height: isMobile ? 56 : 60,
+          borderRadius: 'var(--radius-full)',
+          background: 'var(--color-primary)',
+          color: 'var(--color-white)',
+          border: '2px solid var(--color-gold)',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: 'var(--shadow-lg)',
+          zIndex: 90,
+          transition: 'transform var(--duration-micro) var(--easing-standard), box-shadow var(--duration-short) var(--easing-standard)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.06)';
+          e.currentTarget.style.boxShadow = 'var(--shadow-xl)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+        }}
+      >
+        <Zap size={isMobile ? 22 : 24} strokeWidth={2} fill="var(--color-gold)" color="var(--color-gold)" />
+      </button>
+
+      <QuickMessageModal
+        open={quickOpen}
+        onClose={() => setQuickOpen(false)}
+        onSent={() => setToast({ kind: 'success', message: t('ann_sent', 'Sent') })}
+      />
+
+      {toast && (
+        <Toast
+          kind={toast.kind}
+          message={toast.message}
+          open={true}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }
