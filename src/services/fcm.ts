@@ -183,14 +183,12 @@ async function sendBatch(
     const chunkNo = Math.floor(i / CHUNK_SIZE) + 1;
     const chunkTotal = Math.ceil(tokens.length / CHUNK_SIZE);
 
-    // Hybrid payload: `notification` guarantees the system auto-displays
-    // even if the app is killed and Android has evicted the JS runtime
-    // (data-only messages are unreliable in that state). `data` carries
-    // metadata so the app can build a bubble-capable MessagingStyle
-    // notification when it IS running (onMessage in foreground).
+    // Data-only payload: the mobile app builds exactly one notification per
+    // FCM via @notifee. Hybrid payloads (notification + data) caused
+    // duplicate displays on some Android versions. High FCM priority
+    // guarantees delivery is not deferred by Doze.
     const message: admin.messaging.MulticastMessage = {
       tokens: chunk,
-      notification: { title, body },
       data: {
         type: 'announcement',
         id: String(announcementId),
@@ -234,24 +232,13 @@ async function sendBatch(
   return { sent: totalSent, failed: totalFailed, invalidTokens };
 }
 
-function buildAndroidConfig(priority: 'normal' | 'high' | 'critical'): admin.messaging.AndroidConfig {
-  // ALWAYS use high FCM delivery priority — announcements from a parish are
-  // urgent by nature, never batch-delay them. The NOTIFICATION priority
-  // (channel importance on device) is separate.
-  const channelId = priority === 'critical' ? 'critical' : 'default';
-  const notifPriority: 'default' | 'high' | 'max' =
-    priority === 'critical' ? 'max' : priority === 'high' ? 'high' : 'default';
-  const sound = priority === 'critical' ? 'bell' : 'default';
-
+function buildAndroidConfig(_priority: 'normal' | 'high' | 'critical'): admin.messaging.AndroidConfig {
+  // Data-only + high FCM delivery priority. NO `notification` field so
+  // Android never auto-displays — the app builds the notification itself
+  // via notifee, giving us MessagingStyle + bubble-capable UX.
   return {
     priority: 'high',
     ttl: 24 * 60 * 60 * 1000, // 24h
-    notification: {
-      channelId,
-      sound,
-      priority: notifPriority,
-      defaultSound: false,
-    },
   };
 }
 
