@@ -53,7 +53,7 @@ export default function ChangePassword() {
         </p>
 
         {error && (
-          <div style={{ background: '#FFEBEE', color: colors.error, padding: '8px 12px', borderRadius: 6, marginBottom: 16, fontSize: 13 }}>
+          <div style={{ background: colors.errorSoft, color: colors.error, padding: '8px 12px', borderRadius: 6, marginBottom: 16, fontSize: 13 }}>
             {error}
           </div>
         )}

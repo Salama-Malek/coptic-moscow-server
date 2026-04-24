@@ -19,7 +19,7 @@ export default function CalendarPage() {
   const fonts = getFonts(i18n.language);
   const lang = i18n.language as Language;
   const isMobile = useIsMobile();
-  const { data: events, loading, refetch } = useApiGet<CalendarEvent[]>('/admin/calendar');
+  const { data: events, loading, refetch } = useApiGet<CalendarEvent[]>('/calendar/admin');
 
   const [editing, setEditing] = useState<Partial<CalendarEvent> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -29,9 +29,9 @@ export default function CalendarPage() {
     setSaving(true);
     try {
       if (editing.id) {
-        await api.put(`/admin/calendar/${editing.id}`, editing);
+        await api.put(`/calendar/admin/${editing.id}`, editing);
       } else {
-        await api.post('/admin/calendar', editing);
+        await api.post('/calendar/admin', editing);
       }
       setEditing(null);
       refetch();
@@ -41,7 +41,7 @@ export default function CalendarPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm(t('confirm') + '?')) return;
-    try { await api.delete(`/admin/calendar/${id}`); refetch(); }
+    try { await api.delete(`/calendar/admin/${id}`); refetch(); }
     catch { alert(t('error')); }
   };
 

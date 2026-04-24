@@ -64,7 +64,7 @@ export default function Team() {
 
       {/* Temp password banner */}
       {tempPassword && (
-        <div style={{ background: '#FFF3E0', border: `1px solid ${colors.warning}`, borderRadius: 8, padding: 16, marginBottom: 16 }}>
+        <div style={{ background: colors.warningSoft, border: `1px solid ${colors.warning}`, borderRadius: 8, padding: 16, marginBottom: 16 }}>
           <strong>{t('team_temp_password')}:</strong>
           <code style={{ display: 'block', fontSize: 18, margin: '8px 0', padding: 10, background: colors.white, borderRadius: 6, direction: 'ltr', wordBreak: 'break-all' }}>
             {tempPassword}

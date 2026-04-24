@@ -60,7 +60,7 @@ export default function MyAccount() {
         {message && (
           <div style={{
             padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13,
-            background: message === t('success') ? '#E8F5E9' : '#FFEBEE',
+            background: message === t('success') ? colors.successSoft : colors.errorSoft,
             color: message === t('success') ? colors.success : colors.error,
           }}>
             {message}
