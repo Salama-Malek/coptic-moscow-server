@@ -1,0 +1,78 @@
+{
+  "app_name": "Coptic Church Moscow",
+  "home": "Home",
+  "calendar": "Calendar",
+  "inbox": "Inbox",
+  "settings": "Settings",
+
+  "today_services": "Today's Services",
+  "next_event": "Next Event",
+  "recent_announcements": "Recent Announcements",
+  "no_services_today": "No services today",
+  "no_upcoming": "No upcoming events",
+
+  "upcoming_30_days": "Upcoming Events (30 days)",
+  "no_events": "No events",
+
+  "no_announcements": "No announcements",
+  "unread": "Unread",
+
+  "language": "Language",
+  "notifications": "Notifications",
+  "notification_permission": "Notification Permission",
+  "granted": "Granted",
+  "denied": "Denied",
+  "services_notifications": "Service Notifications",
+  "announcements_notifications": "Announcement Notifications",
+  "test_notification": "Test Notification",
+  "admin_login": "Admin Login",
+  "app_version": "App Version",
+  "offline": "Offline",
+
+  "select_language": "Select Language",
+  "welcome": "Welcome to the Coptic Orthodox Church in Moscow",
+  "continue": "Continue",
+
+  "error_boundary_title": "Something went wrong",
+  "error_boundary_body": "The app hit an unexpected error. Try again.",
+  "error_boundary_reload": "Try again",
+
+  "fasting_calendar": "Fasting Calendar",
+  "fasting_today": "Today",
+  "fasting_legend": "Legend",
+  "fasting_prev_month": "Previous month",
+  "fasting_next_month": "Next month",
+
+  "fast_type_strict": "Strict fast",
+  "fast_type_wine_oil": "Wine & oil allowed",
+  "fast_type_fish": "Fish allowed",
+  "fast_type_none": "No fast",
+
+  "fast_period_great_lent": "Great Lent",
+  "fast_period_holy_week": "Holy Week",
+  "fast_period_jonah_fast": "Fast of Nineveh",
+  "fast_period_dormition_fast": "St Mary's Fast",
+  "fast_period_apostles_fast": "Apostles' Fast",
+  "fast_period_nativity_fast": "Nativity Fast",
+  "fast_period_weekly_wed_fri": "Wednesday / Friday fast",
+  "fast_period_pentecost_period": "Pentecostal season",
+  "fast_period_bright_week": "Bright Week",
+  "fast_period_feast_major": "Great Feast",
+  "fast_period_ordinary": "Ordinary day",
+
+  "feast_nativity": "Nativity of the Lord",
+  "feast_theophany": "Theophany (Epiphany)",
+  "feast_annunciation": "Annunciation",
+  "feast_palm_sunday": "Palm Sunday",
+  "feast_pascha": "Pascha (Resurrection)",
+  "feast_bright_week": "Bright Week",
+  "feast_ascension": "Ascension",
+  "feast_pentecost": "Pentecost",
+  "feast_transfiguration": "Transfiguration",
+  "feast_dormition": "Dormition of the Theotokos",
+  "feast_nayrouz": "Coptic New Year (Nayrouz)",
+  "feast_cross": "Feast of the Cross",
+  "feast_presentation": "Entry into the Temple",
+
+  "notif_watch_action": "Watch"
+}

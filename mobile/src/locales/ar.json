@@ -1,0 +1,78 @@
+{
+  "app_name": "الكنيسة القبطية بموسكو",
+  "home": "الرئيسية",
+  "calendar": "التقويم",
+  "inbox": "الرسائل",
+  "settings": "الإعدادات",
+
+  "today_services": "خدمات اليوم",
+  "next_event": "الحدث التالي",
+  "recent_announcements": "آخر الإعلانات",
+  "no_services_today": "لا توجد خدمات اليوم",
+  "no_upcoming": "لا توجد أحداث قادمة",
+
+  "upcoming_30_days": "الأحداث القادمة (٣٠ يوم)",
+  "no_events": "لا توجد أحداث",
+
+  "no_announcements": "لا توجد إعلانات",
+  "unread": "غير مقروء",
+
+  "language": "اللغة",
+  "notifications": "الإشعارات",
+  "notification_permission": "إذن الإشعارات",
+  "granted": "مسموح",
+  "denied": "مرفوض",
+  "services_notifications": "إشعارات الخدمات",
+  "announcements_notifications": "إشعارات الإعلانات",
+  "test_notification": "إشعار تجريبي",
+  "admin_login": "دخول المشرفين",
+  "app_version": "إصدار التطبيق",
+  "offline": "غير متصل",
+
+  "select_language": "اختر اللغة",
+  "welcome": "مرحبا بكم في الكنيسة القبطية الأرثوذكسية بموسكو",
+  "continue": "متابعة",
+
+  "error_boundary_title": "حدث خطأ ما",
+  "error_boundary_body": "واجه التطبيق خطأً غير متوقع. حاول مرة أخرى.",
+  "error_boundary_reload": "حاول مرة أخرى",
+
+  "fasting_calendar": "تقويم الصوم",
+  "fasting_today": "اليوم",
+  "fasting_legend": "المفتاح",
+  "fasting_prev_month": "الشهر السابق",
+  "fasting_next_month": "الشهر التالي",
+
+  "fast_type_strict": "صوم انقطاعي",
+  "fast_type_wine_oil": "يُسمح بالزيت والخمر",
+  "fast_type_fish": "يُسمح بالسمك",
+  "fast_type_none": "لا يوجد صوم",
+
+  "fast_period_great_lent": "الصوم الكبير",
+  "fast_period_holy_week": "أسبوع الآلام",
+  "fast_period_jonah_fast": "صوم يونان (نينوى)",
+  "fast_period_dormition_fast": "صوم العذراء",
+  "fast_period_apostles_fast": "صوم الرسل",
+  "fast_period_nativity_fast": "صوم الميلاد",
+  "fast_period_weekly_wed_fri": "صوم الأربعاء والجمعة",
+  "fast_period_pentecost_period": "أيام الخمسين",
+  "fast_period_bright_week": "أسبوع الفرح",
+  "fast_period_feast_major": "عيد كبير",
+  "fast_period_ordinary": "يوم عادي",
+
+  "feast_nativity": "عيد الميلاد",
+  "feast_theophany": "عيد الغطاس (الظهور الإلهي)",
+  "feast_annunciation": "عيد البشارة",
+  "feast_palm_sunday": "أحد الشعانين",
+  "feast_pascha": "عيد القيامة (الفصح)",
+  "feast_bright_week": "أسبوع الفرح",
+  "feast_ascension": "عيد الصعود",
+  "feast_pentecost": "عيد العنصرة",
+  "feast_transfiguration": "عيد التجلي",
+  "feast_dormition": "عيد رقاد العذراء",
+  "feast_nayrouz": "رأس السنة القبطية (النيروز)",
+  "feast_cross": "عيد الصليب",
+  "feast_presentation": "عيد دخول الهيكل",
+
+  "notif_watch_action": "مشاهدة"
+}

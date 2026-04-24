@@ -1,22 +1,39 @@
+# --- Dependencies ---
 node_modules/
 admin-web/node_modules/
+mobile/node_modules/
 
-# Build output
+# --- Build output ---
 dist/
 admin-web/dist/
+mobile/.expo/
+mobile/dist/
+mobile/android/
+mobile/ios/
 
-# Environment — secrets go in Hostinger env UI
+# --- Environment — secrets live in Hostinger env UI ---
 .env
 .env.local
 .env.*.local
 
-# Firebase service account — NEVER commit
+# --- Firebase service account — NEVER commit ---
 **/firebase-service-account.json
 
-# TypeScript
+# --- User-uploaded media (dev default). In prod, point UPLOADS_DIR outside the repo. ---
+uploads/
+
+# --- Expo credentials ---
+mobile/*.jks
+mobile/*.p8
+mobile/*.p12
+mobile/*.key
+mobile/*.mobileprovision
+mobile/*.orig.*
+
+# --- TypeScript ---
 *.tsbuildinfo
 
-# IDE / OS
+# --- IDE / OS ---
 .vscode/
 .idea/
 *.swp
@@ -24,6 +41,6 @@ admin-web/dist/
 .DS_Store
 Thumbs.db
 
-# Logs
+# --- Logs ---
 *.log
 npm-debug.log*

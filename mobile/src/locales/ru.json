@@ -1,0 +1,78 @@
+{
+  "app_name": "Коптская Церковь в Москве",
+  "home": "Главная",
+  "calendar": "Календарь",
+  "inbox": "Сообщения",
+  "settings": "Настройки",
+
+  "today_services": "Службы сегодня",
+  "next_event": "Следующее событие",
+  "recent_announcements": "Последние объявления",
+  "no_services_today": "Сегодня нет служб",
+  "no_upcoming": "Нет предстоящих событий",
+
+  "upcoming_30_days": "Предстоящие события (30 дней)",
+  "no_events": "Нет событий",
+
+  "no_announcements": "Нет объявлений",
+  "unread": "Непрочитано",
+
+  "language": "Язык",
+  "notifications": "Уведомления",
+  "notification_permission": "Разрешение уведомлений",
+  "granted": "Разрешено",
+  "denied": "Запрещено",
+  "services_notifications": "Уведомления о службах",
+  "announcements_notifications": "Объявления",
+  "test_notification": "Тестовое уведомление",
+  "admin_login": "Вход для администраторов",
+  "app_version": "Версия приложения",
+  "offline": "Нет сети",
+
+  "select_language": "Выберите язык",
+  "welcome": "Добро пожаловать в Коптскую Православную Церковь в Москве",
+  "continue": "Продолжить",
+
+  "error_boundary_title": "Что-то пошло не так",
+  "error_boundary_body": "Приложение столкнулось с непредвиденной ошибкой. Попробуйте снова.",
+  "error_boundary_reload": "Попробовать снова",
+
+  "fasting_calendar": "Постный календарь",
+  "fasting_today": "Сегодня",
+  "fasting_legend": "Обозначения",
+  "fasting_prev_month": "Предыдущий месяц",
+  "fasting_next_month": "Следующий месяц",
+
+  "fast_type_strict": "Строгий пост",
+  "fast_type_wine_oil": "Разрешено вино и елей",
+  "fast_type_fish": "Разрешена рыба",
+  "fast_type_none": "Не постный день",
+
+  "fast_period_great_lent": "Великий пост",
+  "fast_period_holy_week": "Страстная седмица",
+  "fast_period_jonah_fast": "Пост Ионы (Ниневитян)",
+  "fast_period_dormition_fast": "Успенский пост",
+  "fast_period_apostles_fast": "Апостольский (Петров) пост",
+  "fast_period_nativity_fast": "Рождественский пост",
+  "fast_period_weekly_wed_fri": "Среда / пятница",
+  "fast_period_pentecost_period": "Пятидесятница",
+  "fast_period_bright_week": "Светлая седмица",
+  "fast_period_feast_major": "Великий праздник",
+  "fast_period_ordinary": "Обычный день",
+
+  "feast_nativity": "Рождество Христово",
+  "feast_theophany": "Богоявление (Крещение)",
+  "feast_annunciation": "Благовещение",
+  "feast_palm_sunday": "Вербное воскресенье",
+  "feast_pascha": "Пасха (Воскресение)",
+  "feast_bright_week": "Светлая седмица",
+  "feast_ascension": "Вознесение",
+  "feast_pentecost": "Пятидесятница",
+  "feast_transfiguration": "Преображение",
+  "feast_dormition": "Успение Богородицы",
+  "feast_nayrouz": "Коптский Новый год (Найруз)",
+  "feast_cross": "Воздвижение Креста",
+  "feast_presentation": "Введение во храм",
+
+  "notif_watch_action": "Смотреть"
+}

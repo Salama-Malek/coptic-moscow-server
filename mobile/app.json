@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "Coptic Church Moscow",
+    "slug": "coptic-moscow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "copticmoscow",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "backgroundColor": "#F7F1E6",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "church.copticmoscow.app",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F7F1E6"
+      },
+      "package": "church.copticmoscow.app",
+      "googleServicesFile": "./google-services.json"
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.9.25"
+          }
+        }
+      ],
+      "./plugins/with-app-shortcuts"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "cd8836de-e02c-434d-8bb2-c648fde12531"
+      }
+    }
+  }
+}

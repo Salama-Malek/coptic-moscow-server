@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "141693857614",
+    "project_id": "coptic-moscow",
+    "storage_bucket": "coptic-moscow.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141693857614:android:8fc8d5bdc16c41530db81f",
+        "android_client_info": {
+          "package_name": "church.copticmoscow.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKtNuJ6-4vRNewIQvWh37F-e8XH8K5GQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
