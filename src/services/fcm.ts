@@ -183,16 +183,20 @@ async function sendBatch(
     const chunkNo = Math.floor(i / CHUNK_SIZE) + 1;
     const chunkTotal = Math.ceil(tokens.length / CHUNK_SIZE);
 
+    // Data-only payload — the mobile app (notifee) builds the notification
+    // locally so it can use MessagingStyle + Conversation treatment (eligible
+    // for floating bubbles on Android 11+).
     const message: admin.messaging.MulticastMessage = {
       tokens: chunk,
-      notification: { title, body },
-      android: buildAndroidConfig(priority),
-      apns: buildApnsConfig(priority),
       data: {
-        title_ar: title,
-        body_ar: body,
+        type: 'announcement',
+        id: String(announcementId),
+        title,
+        body,
         priority,
       },
+      android: buildAndroidConfig(priority),
+      apns: buildApnsConfig(priority, title, body),
     };
 
     try {
@@ -228,39 +232,30 @@ async function sendBatch(
 }
 
 function buildAndroidConfig(priority: 'normal' | 'high' | 'critical'): admin.messaging.AndroidConfig {
-  if (priority === 'critical') {
-    return {
-      priority: 'high',
-      notification: {
-        channelId: 'critical',
-        sound: 'bell',
-        priority: 'max',
-      },
-    };
-  }
-  if (priority === 'high') {
-    return {
-      priority: 'high',
-      notification: {
-        channelId: 'default',
-        sound: 'default',
-        priority: 'high',
-      },
-    };
-  }
+  // NO `notification` key — we send data-only so the app can build the
+  // MessagingStyle + bubble-eligible notification itself via notifee.
+  // `priority: 'high'` is the MESSAGING priority (wakes up the app), not
+  // the notification priority.
+  const deliveryPriority: 'high' | 'normal' =
+    priority === 'normal' ? 'normal' : 'high';
   return {
-    priority: 'normal',
-    notification: {
-      channelId: 'default',
-    },
+    priority: deliveryPriority,
+    ttl: 24 * 60 * 60 * 1000, // 24h
   };
 }
 
-function buildApnsConfig(priority: 'normal' | 'high' | 'critical'): admin.messaging.ApnsConfig {
+function buildApnsConfig(
+  priority: 'normal' | 'high' | 'critical',
+  title: string,
+  body: string,
+): admin.messaging.ApnsConfig {
+  // iOS doesn't support bubbles; we keep the auto-display path by including
+  // aps.alert. When the app adds proper Live Activities later, switch this.
   if (priority === 'critical') {
     return {
       payload: {
         aps: {
+          alert: { title, body },
           sound: {
             name: 'bell.caf',
             critical: true,
@@ -278,6 +273,7 @@ function buildApnsConfig(priority: 'normal' | 'high' | 'critical'): admin.messag
     return {
       payload: {
         aps: {
+          alert: { title, body },
           sound: 'default',
         },
       },
@@ -288,7 +284,9 @@ function buildApnsConfig(priority: 'normal' | 'high' | 'critical'): admin.messag
   }
   return {
     payload: {
-      aps: {},
+      aps: {
+        alert: { title, body },
+      },
     },
     headers: {
       'apns-priority': '5',
