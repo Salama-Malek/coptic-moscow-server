@@ -15,6 +15,26 @@ import { initFirebase } from './services/fcm';
 
 dotenv.config();
 
+// --- Global crash diagnostics ---
+// Unhandled promise rejections and uncaught exceptions silently kill Node processes.
+// Log them with full stack traces so Hostinger Runtime Logs show WHY the process exited,
+// instead of just a mysterious restart.
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[fatal] Unhandled promise rejection');
+  console.error('  promise:', promise);
+  console.error('  reason:', reason);
+  if (reason instanceof Error && reason.stack) {
+    console.error('  stack:', reason.stack);
+  }
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('[fatal] Uncaught exception:', err);
+  if (err.stack) console.error('  stack:', err.stack);
+  // Give the log a moment to flush before exit
+  setTimeout(() => process.exit(1), 200);
+});
+
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 

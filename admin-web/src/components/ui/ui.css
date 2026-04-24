@@ -23,12 +23,8 @@
   to { opacity: 1; }
 }
 
+/* Direction-neutral slide so it works the same in LTR and RTL */
 @keyframes sidebarIn {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-[dir="rtl"] @keyframes sidebarIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from { transform: translateY(-4px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
