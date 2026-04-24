@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import api from '../api/client';
-import { useApiGet } from '../hooks/useApi';
+import { useApiGet, notifyDataChanged } from '../hooks/useApi';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import TemplateForm from '../components/TemplateForm';
 import LivePreview from '../components/LivePreview';
@@ -143,6 +143,7 @@ export default function NewAnnouncement() {
         message: asDraft ? t('ann_draft') : t('ann_sent'),
       });
       setShowConfirm(false);
+      notifyDataChanged();
       if (!asDraft) {
         setSelectedTemplateId(null);
         setTitleAr('');

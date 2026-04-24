@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2, AlertTriangle } from 'lucide-react';
-import { useApiGet } from '../hooks/useApi';
+import { useApiGet, notifyDataChanged } from '../hooks/useApi';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import api from '../api/client';
 import { getFonts } from '../theme/fonts';
@@ -18,6 +18,8 @@ export default function AnnouncementHistory() {
   const isMobile = useIsMobile();
   const { data: announcements, loading, refetch } = useApiGet<Announcement[]>(
     '/announcements/admin?limit=100',
+    [],
+    { pollInterval: 15000 },
   );
 
   const [editTarget, setEditTarget] = useState<Announcement | null>(null);
@@ -39,7 +41,7 @@ export default function AnnouncementHistory() {
     try {
       await api.delete(`/announcements/admin/${a.id}`);
       setToast({ kind: 'success', message: t('deleted', 'Deleted') });
-      refetch();
+      notifyDataChanged();
     } catch {
       setToast({ kind: 'error', message: t('error', 'Something went wrong') });
     } finally {

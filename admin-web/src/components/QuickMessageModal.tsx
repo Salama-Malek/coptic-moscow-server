@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Send, AlertTriangle } from 'lucide-react';
 import api from '../api/client';
+import { notifyDataChanged } from '../hooks/useApi';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Input';
@@ -73,6 +74,7 @@ export default function QuickMessageModal({ open, onClose, onSent }: Props) {
         category: 'announcement',
       });
 
+      notifyDataChanged();
       onSent?.();
       onClose();
     } catch (err: unknown) {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApiGet } from '../hooks/useApi';
+import { useApiGet, notifyDataChanged } from '../hooks/useApi';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import api from '../api/client';
 import RRuleBuilder from '../components/RRuleBuilder';
@@ -19,7 +19,7 @@ export default function CalendarPage() {
   const fonts = getFonts(i18n.language);
   const lang = i18n.language as Language;
   const isMobile = useIsMobile();
-  const { data: events, loading, refetch } = useApiGet<CalendarEvent[]>('/calendar/admin');
+  const { data: events, loading, refetch } = useApiGet<CalendarEvent[]>('/calendar/admin', [], { pollInterval: 15000 });
 
   const [editing, setEditing] = useState<Partial<CalendarEvent> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -34,14 +34,14 @@ export default function CalendarPage() {
         await api.post('/calendar/admin', editing);
       }
       setEditing(null);
-      refetch();
+      notifyDataChanged();
     } catch { alert(t('error')); }
     finally { setSaving(false); }
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm(t('confirm') + '?')) return;
-    try { await api.delete(`/calendar/admin/${id}`); refetch(); }
+    try { await api.delete(`/calendar/admin/${id}`); notifyDataChanged(); }
     catch { alert(t('error')); }
   };
 

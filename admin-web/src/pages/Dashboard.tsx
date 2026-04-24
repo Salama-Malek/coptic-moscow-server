@@ -19,7 +19,7 @@ export default function Dashboard() {
   const { t, i18n } = useTranslation();
   const fonts = getFonts(i18n.language);
   const isMobile = useIsMobile();
-  const { data: stats, loading } = useApiGet<Stats>('/admin/stats');
+  const { data: stats, loading } = useApiGet<Stats>('/admin/stats', [], { pollInterval: 15000 });
   const lang = i18n.language as Language;
 
   if (loading) {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Save, AlertTriangle } from 'lucide-react';
 import api from '../api/client';
+import { notifyDataChanged } from '../hooks/useApi';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Input, Textarea } from './ui/Input';
@@ -64,6 +65,7 @@ export default function EditAnnouncementModal({ open, announcement, onClose, onS
         priority,
         category,
       });
+      notifyDataChanged();
       onSaved?.();
       onClose();
     } catch (err: unknown) {
