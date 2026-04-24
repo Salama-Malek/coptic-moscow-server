@@ -6,6 +6,10 @@ import { pool } from '../db/pool';
 const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
 let firebaseInitialized = false;
 
+export function isFirebaseInitialized(): boolean {
+  return firebaseInitialized;
+}
+
 export function initFirebase(): void {
   if (firebaseInitialized) return;
   if (!serviceAccountPath) {
@@ -38,6 +42,9 @@ interface AnnouncementRow {
   body_en: string | null;
   priority: 'normal' | 'high' | 'critical';
   category: 'service' | 'announcement';
+  stream_url: string | null;
+  voice_url: string | null;
+  voice_duration_ms: number | null;
 }
 
 interface DeviceTokenRow {
@@ -76,7 +83,7 @@ export async function sendAnnouncementToAll(announcementId: number): Promise<Sen
 
   // 1. Fetch the announcement
   const [annRows] = await pool.execute(
-    'SELECT id, title_ar, title_ru, title_en, body_ar, body_ru, body_en, priority, category FROM announcements WHERE id = ?',
+    'SELECT id, title_ar, title_ru, title_en, body_ar, body_ru, body_en, priority, category, stream_url, voice_url, voice_duration_ms FROM announcements WHERE id = ?',
     [announcementId]
   );
   const announcements = annRows as AnnouncementRow[];
@@ -125,7 +132,17 @@ export async function sendAnnouncementToAll(announcementId: number): Promise<Sen
     const body = getLocalizedField(announcement, 'body', lang);
     logStep(announcementId, `sending ${lang} batch: ${tokens.length} token(s), title="${title.slice(0, 40)}"`);
 
-    const result = await sendBatch(announcementId, lang, tokens, title, body, announcement.priority);
+    const result = await sendBatch(
+      announcementId,
+      lang,
+      tokens,
+      title,
+      body,
+      announcement.priority,
+      announcement.stream_url,
+      announcement.voice_url,
+      announcement.voice_duration_ms,
+    );
     totalSent += result.sent;
     totalFailed += result.failed;
     allInvalidTokens.push(...result.invalidTokens);
@@ -171,7 +188,10 @@ async function sendBatch(
   tokens: string[],
   title: string,
   body: string,
-  priority: 'normal' | 'high' | 'critical'
+  priority: 'normal' | 'high' | 'critical',
+  streamUrl: string | null,
+  voiceUrl: string | null,
+  voiceDurationMs: number | null,
 ): Promise<SendResult> {
   let totalSent = 0;
   let totalFailed = 0;
@@ -187,15 +207,24 @@ async function sendBatch(
     // FCM via @notifee. Hybrid payloads (notification + data) caused
     // duplicate displays on some Android versions. High FCM priority
     // guarantees delivery is not deferred by Doze.
+    // FCM data values must be strings; omit optional fields entirely when null
+    // so the mobile handler can rely on `typeof data.<field> === 'string'`.
+    const data: Record<string, string> = {
+      type: 'announcement',
+      id: String(announcementId),
+      title,
+      body,
+      priority,
+    };
+    if (streamUrl) data.stream_url = streamUrl;
+    if (voiceUrl) data.voice_url = voiceUrl;
+    if (voiceDurationMs !== null && voiceDurationMs > 0) {
+      data.voice_duration_ms = String(voiceDurationMs);
+    }
+
     const message: admin.messaging.MulticastMessage = {
       tokens: chunk,
-      data: {
-        type: 'announcement',
-        id: String(announcementId),
-        title,
-        body,
-        priority,
-      },
+      data,
       android: buildAndroidConfig(priority),
       apns: buildApnsConfig(priority, title, body),
     };

@@ -11,20 +11,21 @@ const router = Router();
 // --- Schemas ---
 
 const publicQuerySchema = z.object({
-  since: z.string().optional(),
+  // ISO-8601 with offset (e.g. 2026-04-24T10:00:00+03:00). Rejects malformed input early.
+  since: z.string().datetime({ offset: true }).optional(),
 });
 
 const createEventSchema = z.object({
   title_ar: z.string().min(1).max(200),
   title_ru: z.string().max(200).optional(),
   title_en: z.string().max(200).optional(),
-  description_ar: z.string().optional(),
-  description_ru: z.string().optional(),
-  description_en: z.string().optional(),
+  description_ar: z.string().max(4000).optional(),
+  description_ru: z.string().max(4000).optional(),
+  description_en: z.string().max(4000).optional(),
   rrule: z.string().max(500).optional().nullable(),
-  starts_at: z.string().optional().nullable(),
-  duration_minutes: z.number().int().min(0).default(60),
-  reminder_minutes_before: z.number().int().min(0).default(30),
+  starts_at: z.string().datetime({ offset: true }).optional().nullable(),
+  duration_minutes: z.number().int().min(0).max(24 * 60).default(60),
+  reminder_minutes_before: z.number().int().min(0).max(7 * 24 * 60).default(30),
   active: z.number().int().min(0).max(1).default(1),
 });
 

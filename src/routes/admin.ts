@@ -5,7 +5,7 @@ import { comparePassword, hashPassword, generateTempPassword } from '../lib/pass
 import { signToken } from '../lib/jwt';
 import { requireAuth, requireSuperAdmin } from '../middleware/auth';
 import { validate } from '../middleware/validate';
-import { loginLimiter } from '../middleware/ratelimit';
+import { loginLimiter, sensitiveActionLimiter } from '../middleware/ratelimit';
 import { logAudit } from '../services/audit';
 import { RowDataPacket } from 'mysql2';
 
@@ -13,14 +13,15 @@ const router = Router();
 
 // --- Schemas ---
 
+// Password .max(128) prevents DoS via very long bcrypt inputs (bcrypt is O(n) on input).
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
+  email: z.string().email().max(160),
+  password: z.string().min(1).max(128),
 });
 
 const changePasswordSchema = z.object({
-  current_password: z.string().min(1),
-  new_password: z.string().min(8),
+  current_password: z.string().min(1).max(128),
+  new_password: z.string().min(8).max(128),
 });
 
 const createAdminSchema = z.object({
@@ -121,7 +122,7 @@ router.get('/me', requireAuth, async (req, res) => {
 
 // --- Change password ---
 
-router.post('/me/password', requireAuth, validate(changePasswordSchema), async (req, res) => {
+router.post('/me/password', requireAuth, sensitiveActionLimiter, validate(changePasswordSchema), async (req, res) => {
   try {
     const { current_password, new_password } = req.body as z.infer<typeof changePasswordSchema>;
     const adminId = req.admin!.adminId;

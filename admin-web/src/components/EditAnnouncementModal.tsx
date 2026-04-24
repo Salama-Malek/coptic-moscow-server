@@ -6,6 +6,7 @@ import { notifyDataChanged } from '../hooks/useApi';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Input, Textarea } from './ui/Input';
+import { VoiceRecorder } from './VoiceRecorder';
 import type { Announcement } from '../types';
 
 type Props = {
@@ -31,6 +32,9 @@ export default function EditAnnouncementModal({ open, announcement, onClose, onS
   const [bodyEn, setBodyEn] = useState('');
   const [priority, setPriority] = useState<Priority>('normal');
   const [category, setCategory] = useState<Category>('announcement');
+  const [streamUrl, setStreamUrl] = useState('');
+  const [voiceUrl, setVoiceUrl] = useState<string | null>(null);
+  const [voiceDurationMs, setVoiceDurationMs] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -85,6 +89,9 @@ export default function EditAnnouncementModal({ open, announcement, onClose, onS
     setBodyEn(a.body_en ?? '');
     setPriority(a.priority);
     setCategory(a.category);
+    setStreamUrl(a.stream_url ?? '');
+    setVoiceUrl(a.voice_url ?? null);
+    setVoiceDurationMs(a.voice_duration_ms ?? null);
   }
 
   if (!announcement) return null;
@@ -105,6 +112,9 @@ export default function EditAnnouncementModal({ open, announcement, onClose, onS
         body_en: bodyEn.trim() || null,
         priority,
         category,
+        stream_url: streamUrl.trim() || null,
+        voice_url: voiceUrl,
+        voice_duration_ms: voiceDurationMs,
       });
       notifyDataChanged();
       onSaved?.();
@@ -211,6 +221,42 @@ export default function EditAnnouncementModal({ open, announcement, onClose, onS
           dir="ltr"
           rows={3}
         />
+
+        <Input
+          type="url"
+          label={t('ann_stream_url')}
+          helper={t('ann_stream_url_hint')}
+          placeholder={t('ann_stream_url_placeholder')}
+          value={streamUrl}
+          onChange={(e) => setStreamUrl(e.target.value)}
+          dir="ltr"
+        />
+
+        <div>
+          <label
+            style={{
+              display: 'block',
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--color-ink)',
+              marginBottom: 'var(--space-xs)',
+            }}
+          >
+            {t('voice_message_label')}
+          </label>
+          <VoiceRecorder
+            initialUrl={voiceUrl}
+            initialDurationMs={voiceDurationMs}
+            onUploaded={(url, durationMs) => {
+              setVoiceUrl(url);
+              setVoiceDurationMs(durationMs);
+            }}
+            onCleared={() => {
+              setVoiceUrl(null);
+              setVoiceDurationMs(null);
+            }}
+          />
+        </div>
 
         <div
           style={{

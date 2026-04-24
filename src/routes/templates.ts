@@ -16,24 +16,24 @@ const createTemplateSchema = z.object({
   name_ru: z.string().max(150).optional(),
   name_en: z.string().max(150).optional(),
   category: z.enum(['liturgy', 'vespers', 'feast', 'fast', 'meeting', 'custom']),
-  body_ar_template: z.string().min(1),
-  body_ru_template: z.string().optional(),
-  body_en_template: z.string().optional(),
+  body_ar_template: z.string().min(1).max(4000),
+  body_ru_template: z.string().max(4000).optional(),
+  body_en_template: z.string().max(4000).optional(),
   placeholders: z.array(z.object({
-    key: z.string(),
-    label_ar: z.string(),
-    label_ru: z.string().optional(),
-    label_en: z.string().optional(),
+    key: z.string().min(1).max(64),
+    label_ar: z.string().max(150),
+    label_ru: z.string().max(150).optional(),
+    label_en: z.string().max(150).optional(),
     type: z.enum(['text', 'date', 'time', 'datetime', 'boolean', 'number']),
-    default: z.union([z.string(), z.number(), z.boolean()]).optional(),
+    default: z.union([z.string().max(500), z.number(), z.boolean()]).optional(),
     optional: z.boolean().optional(),
-  })),
+  })).max(50),
 });
 
 const updateTemplateSchema = createTemplateSchema.partial();
 
 const renderSchema = z.object({
-  values: z.record(z.union([z.string(), z.number(), z.boolean(), z.null()])),
+  values: z.record(z.union([z.string().max(2000), z.number(), z.boolean(), z.null()])),
   language: z.enum(['ar', 'ru', 'en']).optional(),
 });
 

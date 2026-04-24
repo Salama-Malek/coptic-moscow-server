@@ -10,6 +10,7 @@ import {
   Bell,
   Pencil,
   Clock,
+  Video,
   type LucideIcon,
 } from 'lucide-react';
 import api from '../api/client';
@@ -18,6 +19,7 @@ import { useIsMobile } from '../hooks/useMediaQuery';
 import TemplateForm from '../components/TemplateForm';
 import LivePreview from '../components/LivePreview';
 import ConfirmModal from '../components/ConfirmModal';
+import { VoiceRecorder } from '../components/VoiceRecorder';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input, Textarea } from '../components/ui/Input';
@@ -57,6 +59,9 @@ export default function NewAnnouncement() {
   const [category, setCategory] = useState<Category>('announcement');
   const [scheduleMode, setScheduleMode] = useState<ScheduleMode>('now');
   const [scheduledFor, setScheduledFor] = useState('');
+  const [streamUrl, setStreamUrl] = useState('');
+  const [voiceUrl, setVoiceUrl] = useState<string | null>(null);
+  const [voiceDurationMs, setVoiceDurationMs] = useState<number | null>(null);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [sending, setSending] = useState(false);
@@ -137,6 +142,9 @@ export default function NewAnnouncement() {
         scheduled_for:
           scheduleMode === 'schedule' && !asDraft ? scheduledFor : undefined,
         template_id: selectedTemplateId || undefined,
+        stream_url: streamUrl.trim() || undefined,
+        voice_url: voiceUrl || undefined,
+        voice_duration_ms: voiceDurationMs || undefined,
       });
       setToast({
         kind: 'success',
@@ -149,6 +157,9 @@ export default function NewAnnouncement() {
         setTitleAr('');
         setTitleRu('');
         setTitleEn('');
+        setStreamUrl('');
+        setVoiceUrl(null);
+        setVoiceDurationMs(null);
         setBodyAr('');
         setBodyRu(null);
         setBodyEn(null);
@@ -387,6 +398,64 @@ export default function NewAnnouncement() {
               </div>
             </div>
           )}
+
+          {/* Optional live-stream URL — adds a "Watch" action to the push. */}
+          <div
+            style={{
+              marginTop: 'var(--space-md)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-md)',
+            }}
+          >
+            <Video size={18} strokeWidth={1.75} color="var(--color-primary)" />
+            <div style={{ flex: 1 }}>
+              <Input
+                type="url"
+                placeholder={t('ann_stream_url_placeholder')}
+                value={streamUrl}
+                onChange={(e) => setStreamUrl(e.target.value)}
+                label={t('ann_stream_url')}
+                helper={t('ann_stream_url_hint')}
+              />
+            </div>
+          </div>
+
+          {/* Optional voice message — up to 2 minutes, stored on the server. */}
+          <div style={{ marginTop: 'var(--space-md)' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: 13,
+                fontWeight: 600,
+                color: 'var(--color-ink)',
+                marginBottom: 'var(--space-xs)',
+              }}
+            >
+              {t('voice_message_label')}
+            </label>
+            <div
+              style={{
+                fontSize: 12,
+                color: 'var(--color-ink-muted)',
+                marginBottom: 'var(--space-sm)',
+              }}
+            >
+              {t('voice_message_hint')}
+            </div>
+            <VoiceRecorder
+              initialUrl={voiceUrl}
+              initialDurationMs={voiceDurationMs}
+              onUploaded={(url, durationMs) => {
+                setVoiceUrl(url);
+                setVoiceDurationMs(durationMs);
+              }}
+              onCleared={() => {
+                setVoiceUrl(null);
+                setVoiceDurationMs(null);
+              }}
+            />
+          </div>
 
           {/* Critical priority warning */}
           {priority === 'critical' && (

@@ -8,9 +8,9 @@ import { logAudit } from '../services/audit';
 const router = Router();
 
 const updateSnippetSchema = z.object({
-  value_ar: z.string().min(1),
-  value_ru: z.string().optional(),
-  value_en: z.string().optional(),
+  value_ar: z.string().min(1).max(500),
+  value_ru: z.string().max(500).optional(),
+  value_en: z.string().max(500).optional(),
 });
 
 // --- List all snippets ---
