@@ -33,7 +33,10 @@ router.post('/register', validate(registerSchema), async (req, res) => {
   try {
     const { fcm_token, platform, app_version, language, preferences } = req.body as z.infer<typeof registerSchema>;
 
-    await pool.execute(
+    const tokenPrefix = fcm_token.length > 12 ? fcm_token.slice(0, 12) + '…' : fcm_token;
+    console.log(`[devices/register] platform=${platform} lang=${language} ver=${app_version ?? '?'} token=${tokenPrefix} prefs=${JSON.stringify(preferences)}`);
+
+    const [result] = await pool.execute(
       `INSERT INTO device_tokens (fcm_token, platform, app_version, language, preferences)
        VALUES (?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
@@ -44,10 +47,13 @@ router.post('/register', validate(registerSchema), async (req, res) => {
          last_seen = CURRENT_TIMESTAMP`,
       [fcm_token, platform, app_version ?? null, language, JSON.stringify(preferences)]
     );
+    // affectedRows: 1 = inserted, 2 = updated (ON DUPLICATE KEY UPDATE)
+    const affected = (result as { affectedRows?: number }).affectedRows ?? 0;
+    console.log(`[devices/register] → ${affected === 1 ? 'INSERTED new device' : affected === 2 ? 'UPDATED existing device' : `unexpected affectedRows=${affected}`}`);
 
     res.status(201).json({ message: 'Device registered' });
   } catch (err) {
-    console.error('[devices/register]', err);
+    console.error('[devices/register] ERROR', err);
     res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } });
   }
 });
