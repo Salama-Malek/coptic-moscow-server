@@ -5,6 +5,7 @@ import { useApiGet, notifyDataChanged } from '../hooks/useApi';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import api from '../api/client';
 import { getFonts } from '../theme/fonts';
+import { formatMoscowDateTime } from '../lib/datetime';
 import EditAnnouncementModal from '../components/EditAnnouncementModal';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -101,7 +102,7 @@ export default function AnnouncementHistory() {
               <div className="mobile-card-row">
                 <span className="mobile-card-label">{t('ann_sent')}</span>
                 <span className="mobile-card-value">
-                  {a.sent_at ? new Date(a.sent_at).toLocaleString() : '—'}
+                  {formatMoscowDateTime(a.sent_at, lang)}
                 </span>
               </div>
               <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
@@ -162,7 +163,7 @@ export default function AnnouncementHistory() {
                   <td>
                     <span className={`badge badge-${a.status}`}>{t(`ann_${a.status}`)}</span>
                   </td>
-                  <td>{a.sent_at ? new Date(a.sent_at).toLocaleString() : '—'}</td>
+                  <td>{formatMoscowDateTime(a.sent_at, lang)}</td>
                   <td style={{ textAlign: 'end' }}>
                     <div style={{ display: 'inline-flex', gap: 6, justifyContent: 'flex-end' }}>
                       <Button

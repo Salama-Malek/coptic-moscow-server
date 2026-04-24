@@ -72,6 +72,33 @@ router.get('/admin', requireAuth, async (_req, res) => {
   }
 });
 
+// --- Admin: fetch single calendar event by id (used by Edit form) ---
+
+router.get('/admin/:id', requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(String(req.params.id), 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: { code: 'BAD_ID', message: 'Invalid id' } });
+      return;
+    }
+    const [rows] = await pool.execute(
+      `SELECT id, title_ar, title_ru, title_en, description_ar, description_ru, description_en,
+              rrule, starts_at, duration_minutes, reminder_minutes_before, active, updated_at
+       FROM calendar_events WHERE id = ?`,
+      [id]
+    );
+    const list = rows as RowDataPacket[];
+    if (list.length === 0) {
+      res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Event not found' } });
+      return;
+    }
+    res.json(list[0]);
+  } catch (err) {
+    console.error('[calendar/admin/get]', err);
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } });
+  }
+});
+
 // --- Admin: create event ---
 
 router.post('/admin', requireAuth, validate(createEventSchema), async (req, res) => {

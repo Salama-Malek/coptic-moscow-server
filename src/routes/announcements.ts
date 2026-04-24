@@ -88,6 +88,39 @@ router.get('/admin', requireAuth, async (req, res) => {
   }
 });
 
+// --- Admin: fetch single announcement by id (used by Edit modal to load fresh data) ---
+
+router.get('/admin/:id', requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(String(req.params.id), 10);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ error: { code: 'BAD_ID', message: 'Invalid id' } });
+      return;
+    }
+
+    const [rows] = await pool.execute(
+      `SELECT a.id, a.title_ar, a.title_ru, a.title_en, a.body_ar, a.body_ru, a.body_en,
+              a.priority, a.category, a.status, a.scheduled_for, a.sent_at, a.created_at,
+              a.created_by, adm.display_name as created_by_name,
+              sl.sent_count, sl.failed_count
+       FROM announcements a
+       LEFT JOIN admins adm ON adm.id = a.created_by
+       LEFT JOIN send_log sl ON sl.announcement_id = a.id
+       WHERE a.id = ?`,
+      [id]
+    );
+    const list = rows as RowDataPacket[];
+    if (list.length === 0) {
+      res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Announcement not found' } });
+      return;
+    }
+    res.json(list[0]);
+  } catch (err) {
+    console.error('[announcements/admin/get]', err);
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } });
+  }
+});
+
 // --- Admin: create announcement ---
 
 router.post('/admin', requireAuth, validate(createAnnouncementSchema), async (req, res) => {

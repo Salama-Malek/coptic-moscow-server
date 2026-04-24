@@ -21,6 +21,8 @@ type Category = 'service' | 'announcement';
 export default function EditAnnouncementModal({ open, announcement, onClose, onSaved }: Props) {
   const { t } = useTranslation();
 
+  const [fresh, setFresh] = useState<Announcement | null>(null);
+  const [loadingFresh, setLoadingFresh] = useState(false);
   const [titleAr, setTitleAr] = useState('');
   const [titleRu, setTitleRu] = useState('');
   const [titleEn, setTitleEn] = useState('');
@@ -32,30 +34,69 @@ export default function EditAnnouncementModal({ open, announcement, onClose, onS
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load fields when announcement changes
+  // When the modal opens, fetch the latest version of this announcement from
+  // the server so we're never editing a stale row that another admin may have
+  // just updated. Falls back to the passed-in `announcement` if the fetch fails.
   useEffect(() => {
-    if (announcement) {
-      setTitleAr(announcement.title_ar);
-      setTitleRu(announcement.title_ru ?? '');
-      setTitleEn(announcement.title_en ?? '');
-      setBodyAr(announcement.body_ar);
-      setBodyRu(announcement.body_ru ?? '');
-      setBodyEn(announcement.body_en ?? '');
-      setPriority(announcement.priority);
-      setCategory(announcement.category);
-      setError(null);
-    }
-  }, [announcement]);
+    if (!open || !announcement) return;
+
+    // Seed with the row we already have so fields aren't blank while we fetch
+    applyToState(announcement);
+    setError(null);
+
+    let cancelled = false;
+    setLoadingFresh(true);
+    api
+      .get<Announcement>(`/announcements/admin/${announcement.id}`)
+      .then((res) => {
+        if (cancelled) return;
+        setFresh(res.data);
+        applyToState(res.data);
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        const status = (err as { response?: { status?: number } })?.response?.status;
+        if (status === 404) {
+          setError(
+            t(
+              'edit_not_found',
+              'This announcement was deleted by another admin. Close and refresh.',
+            ),
+          );
+        }
+        // Any other error: silent. We already populated from the passed prop.
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingFresh(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, announcement?.id]);
+
+  function applyToState(a: Announcement) {
+    setTitleAr(a.title_ar);
+    setTitleRu(a.title_ru ?? '');
+    setTitleEn(a.title_en ?? '');
+    setBodyAr(a.body_ar);
+    setBodyRu(a.body_ru ?? '');
+    setBodyEn(a.body_en ?? '');
+    setPriority(a.priority);
+    setCategory(a.category);
+  }
 
   if (!announcement) return null;
 
-  const isSent = !!announcement.sent_at;
+  const current = fresh ?? announcement;
+  const isSent = !!current.sent_at;
 
   const handleSave = async () => {
     setSaving(true);
     setError(null);
     try {
-      await api.put(`/announcements/admin/${announcement.id}`, {
+      await api.put(`/announcements/admin/${current.id}`, {
         title_ar: titleAr,
         title_ru: titleRu.trim() || null,
         title_en: titleEn.trim() || null,
@@ -82,9 +123,24 @@ export default function EditAnnouncementModal({ open, announcement, onClose, onS
     <Modal
       open={open}
       onClose={onClose}
-      title={`${t('edit', 'Edit')} — #${announcement.id}`}
+      title={`${t('edit', 'Edit')} — #${current.id}`}
       size="lg"
     >
+      {loadingFresh && (
+        <div
+          style={{
+            padding: '8px 12px',
+            background: 'var(--color-surface)',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: 12,
+            color: 'var(--color-ink-muted)',
+            marginBottom: 'var(--space-sm)',
+          }}
+        >
+          {t('loading_fresh', 'Loading latest version…')}
+        </div>
+      )}
+
       {/* Sent warning */}
       {isSent && (
         <div

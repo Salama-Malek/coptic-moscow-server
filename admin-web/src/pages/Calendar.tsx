@@ -6,6 +6,7 @@ import api from '../api/client';
 import RRuleBuilder from '../components/RRuleBuilder';
 import { colors } from '../theme/colors';
 import { getFonts } from '../theme/fonts';
+import { formatMoscowDateTime } from '../lib/datetime';
 import type { CalendarEvent, Language } from '../types';
 
 const emptyEvent = {
@@ -23,6 +24,18 @@ export default function CalendarPage() {
 
   const [editing, setEditing] = useState<Partial<CalendarEvent> | null>(null);
   const [saving, setSaving] = useState(false);
+
+  // Fetch latest data before editing — prevents editing a stale row that
+  // another admin (or the polling interval) may have just updated.
+  const openEdit = async (ev: CalendarEvent) => {
+    openEdit(ev); // seed with what we already have
+    try {
+      const res = await api.get<CalendarEvent>(`/calendar/admin/${ev.id}`);
+      setEditing({ ...res.data });
+    } catch {
+      /* silent — edit with stale data beats showing nothing */
+    }
+  };
 
   const handleSave = async () => {
     if (!editing) return;
@@ -120,7 +133,7 @@ export default function CalendarPage() {
               <div style={{ fontWeight: 600, color: colors.primary, marginBottom: 6 }}>{getTitle(ev)}</div>
               <div className="mobile-card-row">
                 <span className="mobile-card-label">{t('cal_starts_at')}</span>
-                <span className="mobile-card-value">{ev.starts_at ? new Date(ev.starts_at).toLocaleString() : '—'}</span>
+                <span className="mobile-card-value">{formatMoscowDateTime(ev.starts_at, lang)}</span>
               </div>
               <div className="mobile-card-row">
                 <span className="mobile-card-label">{t('cal_rrule')}</span>
@@ -131,7 +144,7 @@ export default function CalendarPage() {
                 <span className="mobile-card-value">{ev.active ? '✓' : '✗'}</span>
               </div>
               <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                <button onClick={() => setEditing({ ...ev })} className="btn btn-secondary" style={{ flex: 1, padding: '8px 0' }}>
+                <button onClick={() => openEdit(ev)} className="btn btn-secondary" style={{ flex: 1, padding: '8px 0' }}>
                   Edit
                 </button>
                 <button onClick={() => handleDelete(ev.id)} className="btn btn-danger" style={{ flex: 1, padding: '8px 0' }}>
@@ -157,12 +170,12 @@ export default function CalendarPage() {
               {events?.map((ev) => (
                 <tr key={ev.id} style={{ opacity: ev.active ? 1 : 0.5 }}>
                   <td>{getTitle(ev)}</td>
-                  <td>{ev.starts_at ? new Date(ev.starts_at).toLocaleString() : '—'}</td>
+                  <td>{formatMoscowDateTime(ev.starts_at, lang)}</td>
                   <td style={{ fontSize: 12 }}>{ev.rrule || '—'}</td>
                   <td>{ev.active ? '✓' : '✗'}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 8 }}>
-                      <button onClick={() => setEditing({ ...ev })} className="btn btn-ghost">Edit</button>
+                      <button onClick={() => openEdit(ev)} className="btn btn-ghost">Edit</button>
                       <button onClick={() => handleDelete(ev.id)} className="btn btn-ghost" style={{ color: colors.error }}>{t('delete')}</button>
                     </div>
                   </td>

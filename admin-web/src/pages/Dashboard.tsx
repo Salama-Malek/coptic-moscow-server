@@ -13,6 +13,7 @@ import StatsCard from '../components/StatsCard';
 import { Card } from '../components/ui/Card';
 import { EmptyState } from '../components/ui/EmptyState';
 import { getFonts } from '../theme/fonts';
+import { formatMoscowDate } from '../lib/datetime';
 import type { Stats, Language } from '../types';
 
 export default function Dashboard() {
@@ -187,7 +188,7 @@ export default function Dashboard() {
                 <MetaRow label={t('ann_priority')} value={t(`priority_${a.priority}`)} />
                 <MetaRow
                   label={t('ann_sent')}
-                  value={a.sent_at ? new Date(a.sent_at).toLocaleDateString() : '—'}
+                  value={formatMoscowDate(a.sent_at, lang)}
                 />
                 {a.sent_count !== undefined && (
                   <MetaRow
@@ -256,7 +257,7 @@ export default function Dashboard() {
                       <Td>
                         <PriorityPill priority={a.priority} label={t(`priority_${a.priority}`)} />
                       </Td>
-                      <Td>{a.sent_at ? new Date(a.sent_at).toLocaleDateString() : '—'}</Td>
+                      <Td>{formatMoscowDate(a.sent_at, lang)}</Td>
                       <Td>
                         {a.sent_count ?? '—'} / {a.failed_count ?? 0}
                       </Td>
