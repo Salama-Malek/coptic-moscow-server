@@ -183,11 +183,14 @@ async function sendBatch(
     const chunkNo = Math.floor(i / CHUNK_SIZE) + 1;
     const chunkTotal = Math.ceil(tokens.length / CHUNK_SIZE);
 
-    // Data-only payload — the mobile app (notifee) builds the notification
-    // locally so it can use MessagingStyle + Conversation treatment (eligible
-    // for floating bubbles on Android 11+).
+    // Hybrid payload: `notification` guarantees the system auto-displays
+    // even if the app is killed and Android has evicted the JS runtime
+    // (data-only messages are unreliable in that state). `data` carries
+    // metadata so the app can build a bubble-capable MessagingStyle
+    // notification when it IS running (onMessage in foreground).
     const message: admin.messaging.MulticastMessage = {
       tokens: chunk,
+      notification: { title, body },
       data: {
         type: 'announcement',
         id: String(announcementId),
@@ -232,15 +235,23 @@ async function sendBatch(
 }
 
 function buildAndroidConfig(priority: 'normal' | 'high' | 'critical'): admin.messaging.AndroidConfig {
-  // NO `notification` key — we send data-only so the app can build the
-  // MessagingStyle + bubble-eligible notification itself via notifee.
-  // `priority: 'high'` is the MESSAGING priority (wakes up the app), not
-  // the notification priority.
-  const deliveryPriority: 'high' | 'normal' =
-    priority === 'normal' ? 'normal' : 'high';
+  // ALWAYS use high FCM delivery priority — announcements from a parish are
+  // urgent by nature, never batch-delay them. The NOTIFICATION priority
+  // (channel importance on device) is separate.
+  const channelId = priority === 'critical' ? 'critical' : 'default';
+  const notifPriority: 'default' | 'high' | 'max' =
+    priority === 'critical' ? 'max' : priority === 'high' ? 'high' : 'default';
+  const sound = priority === 'critical' ? 'bell' : 'default';
+
   return {
-    priority: deliveryPriority,
+    priority: 'high',
     ttl: 24 * 60 * 60 * 1000, // 24h
+    notification: {
+      channelId,
+      sound,
+      priority: notifPriority,
+      defaultSound: false,
+    },
   };
 }
 
